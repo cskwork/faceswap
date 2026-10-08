@@ -300,9 +300,12 @@ class HelpMenu(tk.Menu):  # pylint:disable=too-many-ancestors
         str
             The branch to switch to
         """
+        if not branch or branch.startswith("-"):
+            logger.error("Invalid branch name for checkout")
+            return
         logger.info("Switching branch to '%s'...", branch)
-        gitcmd = "git checkout {}".format(branch)
-        cmd = Popen(gitcmd, shell=True, stdout=PIPE, stderr=STDOUT, cwd=_WORKING_DIR)
+        gitcmd = ["git", "checkout", branch]
+        cmd = Popen(gitcmd, stdout=PIPE, stderr=STDOUT, cwd=_WORKING_DIR)
         stdout, _ = cmd.communicate()
         retcode = cmd.poll()
         if retcode != 0:
